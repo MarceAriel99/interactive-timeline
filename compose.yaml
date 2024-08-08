@@ -18,4 +18,4 @@ services:
     environment:
       CHOKIDAR_USEPOLLING: true
       FAST_REFRESH: true
-      REACT_APP_CURRENT_ENV: production
+      REACT_APP_CURRENT_ENV: development

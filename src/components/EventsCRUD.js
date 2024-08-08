@@ -74,10 +74,12 @@ function EventsCRUDComponent({ eventRepository }) {
 
   const handleChangeDate = (e) => {
     const { name, value } = e.target;
+    const date = value ? new Date(value) : null;
+
     if (isEditing) {
-      setEditEvent({ ...editEvent, [name]: new Date(value) });
+      setEditEvent({ ...editEvent, [name]: date });
     } else {
-      setNewEvent({ ...newEvent, [name]: new Date(value) });
+      setNewEvent({ ...newEvent, [name]: date });
     }
   };
 
@@ -90,10 +92,12 @@ function EventsCRUDComponent({ eventRepository }) {
   };
 
   const checkFields = () => {
-    if (newEvent.title === '' || newEvent.date === '') {
+    // Check if title and date are empty on the new event or the event being edited
+    if ((!isEditing && (!newEvent.title || !newEvent.date)) || (isEditing && (!editEvent.title || !editEvent.date))) {
       setErrorMessage('Title and Date fields are required');
       return false;
     }
+    setErrorMessage('');
     return true;
   }
 
