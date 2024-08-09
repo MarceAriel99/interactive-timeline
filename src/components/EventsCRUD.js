@@ -54,6 +54,12 @@ function EventsCRUDComponent({ eventRepository }) {
   };
 
   const handleDeleteEvent = async (id) => {
+
+    // Show confirmation dialog before deleting
+    if (!window.confirm('Are you sure you want to delete this event?')) {
+      return
+    }
+
     try {
       console.log('Deleting event with id:', id);
       await eventRepository.deleteEventById(id);
