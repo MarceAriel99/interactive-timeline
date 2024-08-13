@@ -18,7 +18,7 @@ RUN npm install react-vertical-timeline-component
 RUN npm install postgres
 RUN npm install @supabase/supabase-js
 RUN npm install @supabase/auth-ui-react
-RUN npm install react-router-dom
+RUN npm install react-router-dom --save
 RUN npm install -g netlify-cli
 RUN npm install sass --save-dev
 RUN npm install react-responsive-carousel --save
