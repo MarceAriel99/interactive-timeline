@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import supabase from '../supabase/supabaseClient';
+import local_avatar from '../resources/default-profile-picture.jpg';
 
 const AuthContext = createContext();
 
@@ -13,7 +14,7 @@ export const AuthProvider = ({ children }) => {
 
       if (process.env.REACT_APP_CURRENT_ENV === "development") {
         console.log("Using Postgres");
-        setSession({ access_token: "local_token", user: { user_metadata: { full_name: "LocalUser" } } });
+        setSession({ access_token: "local_token", user: { user_metadata: { full_name: "LocalUser", avatar_url: local_avatar } } });
         setLoading(false);
         return;
       }
