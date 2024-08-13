@@ -20,9 +20,15 @@ class DB {
     } else if (process.env.REACT_APP_CURRENT_ENV === "development") {
       console.log("Using Postgres");
       this.db = new DBPostgres();
+      await this.db.initialize();
     } else {
       throw new Error("Invalid REACT_APP_CURRENT_ENV");
     }
+    console.log("DB initialized");
+  }
+
+  async isInitialized() {
+    return this.db !== null;
   }
 
   async getAllRecords(tableName) {
