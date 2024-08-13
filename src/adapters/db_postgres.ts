@@ -1,5 +1,9 @@
 export class DBPostgres {
 
+    async initialize() : Promise<void> {
+        await fetch('http://localhost:4000/initialize');
+    }
+
     async getAllRecords(tableName) : Promise<any[] | null> {
         const response : Response = await fetch(`http://localhost:4000/${tableName}`);
         const data = await response.json();

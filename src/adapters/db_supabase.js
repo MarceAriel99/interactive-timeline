@@ -3,7 +3,6 @@ import supabase from "../supabase/supabaseClient";
 export class DBSupabase {
 
   async initialize() {
-    console.log("initialize Supabase");
     this.supabase = supabase;
   }
 

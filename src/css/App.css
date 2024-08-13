@@ -10,6 +10,11 @@ header {
   padding: 1em;
 }
 
+header a {
+  color: white;
+  text-decoration: none;
+}
+
 header h1 {
   margin: 0.25em;
   font-size: 2rem;
@@ -193,7 +198,7 @@ header .header-auth .header-auth-signout_button:hover {
   color: white;
 }
 
-.App-body {
+.App-main {
   background-color: #282c34;
   flex: 1;
   display: flex;
