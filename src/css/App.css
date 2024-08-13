@@ -210,7 +210,23 @@ header .header-auth .header-auth-signout_button:hover {
 }
 
 .App-link {
+  /* it should look like a button */
   color: #61dafb;
+  text-decoration: none;
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #61dafb;
+  border-radius: 5px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+/* transition size and color */
+.App-link:hover {
+  color: white;
+  background-color: #3f8ca1;
+  scale: 1.1;
 }
 
 @keyframes App-logo-spin {
