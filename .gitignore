@@ -3,6 +3,7 @@
 
 ### misc ###
 .env
+public/test_images
 
 ### react ###
 .DS_*
