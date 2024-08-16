@@ -10,7 +10,20 @@ export class DBSupabase {
     this.session = session;
   }
 
-  async getAllRecords(tableName) {
+  async getAllRecords(tableName, orderBy=null, order=null) {
+    
+    if (orderBy) {
+      let { data, error } = await this.supabase
+        .from(tableName)
+        .select('*')
+        .order(orderBy, { ascending: order === 'DESC' ? false : true })
+      if (error) {
+        console.error('Error getting all records:', error.message);
+        throw error;
+      }
+      return data;
+    }
+
     let { data, error } = await this.supabase
       .from(tableName)
       .select('*')
@@ -18,7 +31,6 @@ export class DBSupabase {
       console.error('Error getting all records:', error.message);
       throw error;
     }
-
     return data;
   }
 

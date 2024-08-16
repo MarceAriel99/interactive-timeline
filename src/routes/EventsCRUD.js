@@ -7,7 +7,7 @@ import EventRepository from '../repositories/event_repository.js';
 
 function EventsCRUD() {
   const { session, handleSignIn, handleSignOut } = useAuth();
-  const { database, loading } = useDatabase(); //
+  const { database, loading } = useDatabase();
 
   return (
     <div className="App">

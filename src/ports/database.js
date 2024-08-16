@@ -3,6 +3,7 @@
 import { DBPostgres } from "../adapters/db_postgres.ts";
 import { DBSupabase } from "../adapters/db_supabase";
 
+// TODO Should not save the session as a property of the DB class. It should be passed as a parameter to the initialize method.
 class DB {
 
   constructor(session) {
@@ -30,27 +31,6 @@ class DB {
   async isInitialized() {
     return this.db !== null;
   }
-
-  async getAllRecords(tableName) {
-    return this.db.getAllRecords(tableName);
-  }
-
-  async getRecordById(tableName, id) {
-    return this.db.getRecordById(tableName, id);
-  }
-
-  async createRecord(tableName, record) {
-    return this.db.createRecord(tableName, record);
-  }
-
-  async updateRecord(tableName, id, record) {
-    return this.db.updateRecord(tableName, id, record);
-  }
-
-  async deleteRecord(tableName, id) {
-    return this.db.deleteRecord(tableName, id);
-  }
-
 }
 
 export default DB;

@@ -4,8 +4,11 @@ export class DBPostgres {
         await fetch('http://localhost:4000/initialize');
     }
 
-    async getAllRecords(tableName) : Promise<any[] | null> {
-        const response : Response = await fetch(`http://localhost:4000/${tableName}`);
+    async getAllRecords(tableName, orderBy=null, order=null) : Promise<any | null> {
+        let query_params = '';
+        query_params += orderBy ? `?orderBy=${orderBy}` : '';
+        query_params += order ? `&order=${order}` : '';
+        const response : Response = await fetch(`http://localhost:4000/${tableName}${query_params}`);
         const data = await response.json();
         return data;
     }
