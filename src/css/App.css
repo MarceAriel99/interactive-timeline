@@ -220,7 +220,7 @@ APP
   background-color: transparent;
   cursor: pointer;
   transition: 0.15s;
-  margin: 1rem;
+  margin: 0em 1em;
 }
 
 /* transition size and color */

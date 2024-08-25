@@ -88,4 +88,37 @@ export class DBSupabase {
     return data
   }
 
+  async uploadFile(file) {
+
+    const { data, error } = await this.supabase.storage
+      .from('interactive_timeline_media')
+      .upload(`test`, file)
+    if (error) {
+      console.error('Error uploading file:', error.message)
+      throw error
+    }
+    return data.Location
+  }
+
+  async deleteFile(file_name) {
+      
+    const { data, error } = await this.supabase.storage
+      .from('interactive_timeline_media')
+      .remove([file_name])
+    if (error) {
+      console.error('Error deleting file:', error.message)
+      throw error
+    }
+    return data
+  }
+
+  async createEventTransaction(event, new_media) {
+      
+    let { data, error } = await this.supabase.rpc('create_event', { event, new_media })
+    if (error) {
+      console.error('Error creating event transaction:', error.message)
+      throw error
+    }
+    return data
+  }
 }

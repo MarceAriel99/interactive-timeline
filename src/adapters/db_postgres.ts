@@ -20,15 +20,27 @@ export class DBPostgres {
     }
     
     async createRecord(tableName, record) : Promise<any | null> {
-        const response : Response = await fetch(`http://localhost:4000/${tableName}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(record),
-        });
-        const data = await response.json();
-        return data[0];
+        try{
+            const response : Response = await fetch(`http://localhost:4000/${tableName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(record),
+            });
+
+            if (!response.ok) {
+                console.log(response);
+                throw new Error(response.statusText);
+            }
+
+            const data = await response.json();
+            return data[0];
+
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
     
     async updateRecord(tableName, id, record) : Promise<any | null> {
@@ -49,5 +61,37 @@ export class DBPostgres {
         });
         const data = await response.json();
         return data[0];
+    }
+
+    async uploadFile(file) : Promise<any | null> {
+        // create form data
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response : Response = await fetch(`http://localhost:4000/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+
+            const data = await response.json();
+            return data.url;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteFile(file_name) : Promise<any | null> {
+        console.log("DELETE FILE: ", file_name);
+        const response : Response = await fetch(`http://localhost:4000/delete/${file_name}`, {
+            method: 'DELETE',
+        });
+        const data = await response.json();
+        return data;
     }
 }
