@@ -5,7 +5,7 @@ import Event from '../model/event';
 
 function EventsCRUDComponent({ eventRepository }) {
   const [events, setEvents] = useState([]);
-  const [newEvent, setNewEvent] = useState(new Event('', '', '', ''));
+  const [newEvent, setNewEvent] = useState(new Event({}));
   const [editEvent, setEditEvent] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 	const [error_message, setErrorMessage] = useState('');
@@ -28,10 +28,22 @@ function EventsCRUDComponent({ eventRepository }) {
     try {
       const newEventToSave = { ...newEvent, id: null };
       console.log('Creating event:', newEventToSave);
-			const createdEvent = await eventRepository.saveEvent(newEventToSave);
+      const result = await eventRepository.saveEvent(newEventToSave);
+			
+      if (!result.success) {
+        setErrorMessage(result.message);
+        return;
+      }
+      
+      const createdEvent = result.data;
+
+      if (result.messageType === 'WARNING') {
+        setErrorMessage(result.message);
+      }
+      
 			console.log('Created event:', createdEvent);
       setEvents([...events, createdEvent]);
-      setNewEvent(new Event('', '', '', '')); // Reset fields
+      setNewEvent(new Event({}));
     } catch (error) {
       console.error('Error creating event:', error);
 			setErrorMessage(error.message);
@@ -41,8 +53,20 @@ function EventsCRUDComponent({ eventRepository }) {
   const handleUpdateEvent = async () => {
     if (!checkFields()) return;
     try {
-      console.log("Editing event: ", editEvent)
-      const updatedEvent = await eventRepository.saveEvent(editEvent);
+      const result = await eventRepository.saveEvent(editEvent);
+
+      if (!result.success) {
+        setErrorMessage(result.message);
+        return;
+      }
+
+      const updatedEvent = result.data;
+
+      if (result.messageType === 'WARNING') {
+        setErrorMessage(result.message);
+      }
+
+      console.log('Updated event:', updatedEvent);
 			// Update the events list with the updated event
 			setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
       setEditEvent(null);
@@ -69,7 +93,7 @@ function EventsCRUDComponent({ eventRepository }) {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChangeTextField = (e) => {
     const { name, value } = e.target;
     if (isEditing) {
       setEditEvent({ ...editEvent, [name]: value });
@@ -86,6 +110,51 @@ function EventsCRUDComponent({ eventRepository }) {
       setEditEvent({ ...editEvent, [name]: date });
     } else {
       setNewEvent({ ...newEvent, [name]: date });
+    }
+  };
+
+  const handleAddMedia = (e) => {
+
+    console.log(events);
+    const files = Array.from(e.target.files);
+
+    const eventInstance = isEditing ? new Event(editEvent) : new Event(newEvent);
+
+    files.forEach(file => {
+      eventInstance.addNewMedia(file);
+    });
+
+    // Update state with new data
+    if (isEditing) {
+      setEditEvent({ ...editEvent, media: eventInstance.getMedia(), new_media: eventInstance.getNewMedia() });
+      console.log('Edit event:', editEvent);
+    }
+    else {
+      setNewEvent({ ...newEvent, media: eventInstance.getMedia(), new_media: eventInstance.getNewMedia() });
+      console.log('New event:', newEvent);
+    }
+ 
+    // Clear the input field
+    e.target.value = null;
+  };
+
+  const handleRemoveMedia = (index) => {
+    const eventInstance = isEditing ? new Event(editEvent) : new Event(newEvent);
+    // console.log("EVENTS CRUD COMPONENT");
+    // console.log('Removing media at index:', index);
+    // console.log('Media:', eventInstance.getMedia());
+    // console.log('New media:', eventInstance.getNewMedia());
+    eventInstance.removeMedia(index);
+    // console.log('Media after removing:', eventInstance.getMedia());
+    // console.log('New media after removing:', eventInstance.getNewMedia());
+    // console.log("EVENTS CRUD COMPONENT");
+
+    // Update state with new data
+    if (isEditing) {
+      setEditEvent({ ...editEvent, media: eventInstance.getMedia(), new_media: eventInstance.getNewMedia() });
+    }
+    else {
+      setNewEvent({ ...newEvent, media: eventInstance.getMedia(), new_media: eventInstance.getNewMedia() });
     }
   };
 
@@ -116,14 +185,14 @@ function EventsCRUDComponent({ eventRepository }) {
           type="text"
           name="title"
           value={isEditing ? editEvent.title : newEvent.title}
-          onChange={handleChange}
+          onChange={handleChangeTextField}
           placeholder="Title"
         />
-        <input
+        <input // TODO: Description and place are being saved as empty strings, should be null if not provided
           type="text"
           name="description"
-          value={isEditing ? editEvent.description : newEvent.description}
-          onChange={handleChange}
+          value={isEditing ? editEvent.description ? editEvent.description : '' : newEvent.description ? newEvent.description : '' }
+          onChange={handleChangeTextField}
           placeholder="Description"
         />
         <input
@@ -136,10 +205,30 @@ function EventsCRUDComponent({ eventRepository }) {
         <input
           type="text"
           name="place"
-          value={isEditing ? editEvent.place : newEvent.place}
-          onChange={handleChange}
+          value={isEditing ? editEvent.place ? editEvent.place : '' : newEvent.place ? newEvent.place : '' }
+          onChange={handleChangeTextField}
           placeholder="Place"
         />
+        
+        {/* Provide a way to add or remove media (showing the image) */}
+        <div className="event-media">
+          {isEditing && editEvent.media.map((src, index) => (
+            <div key={index}>
+              <img key={index} src={src} alt="Event media" />
+              <button onClick={() => handleRemoveMedia(index)}>Remove</button>
+            </div>
+          ))}
+          {!isEditing && newEvent.media.map((src, index) => (
+            <div key={index}>
+              <img key={index} src={src} alt="Event media" />
+              <button onClick={() => handleRemoveMedia(index)}>Remove</button>
+            </div>
+          ))}
+          <button onClick={() => document.getElementsByName('media')[0].click()}>Add Media</button>
+          {/*<input type="file" name="media" accept="image/webp" style={{display:'none'}} multiple onChange={handleAddMedia} /> */}
+          <input type="file" name="media" accept="image/*" style={{display:'none'}} multiple onChange={handleAddMedia} />
+        </div>
+
         <button onClick={isEditing ? handleUpdateEvent : handleCreateEvent}>
           {isEditing ? 'Update Event' : 'Create Event'}
         </button>
@@ -165,7 +254,12 @@ function EventsCRUDComponent({ eventRepository }) {
 							<p className="event-place">
 								{"Place: " + (event.place ? event.place : 'No place')}
 							</p>
-							<button onClick={() => { setEditEvent(event); setIsEditing(true); window.scrollTo({ top: 0, behavior: 'smooth' });}}>Edit</button>  
+              <div className="event-media">
+                {event.media.map((src, index) => (
+                  <img key={index} src={src} alt="Event media" />
+                ))}
+              </div>
+							<button onClick={() => { setEditEvent(event); setIsEditing(true); window.scrollTo({ top: 0, behavior: 'smooth' }); setErrorMessage(''); }}>Edit</button> 
 							<button onClick={() => handleDeleteEvent(event.id)}>Delete</button>
 						</li>
 					))}

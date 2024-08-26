@@ -21,7 +21,7 @@ function App() {
       const eventRepository = new EventRepository(database);
       eventRepository.loadAllEvents().then((events) => {
         setEvents(events);
-        console.log('Events loaded:', events);
+        //console.log('Events loaded:', events);
       }).catch((error) => {
         console.error('Error loading events:', error);
       });
