@@ -11,8 +11,9 @@ class EventRepository{
 
     async loadAllEvents(){
         let events_records = await this.database.db.getAllRecords(EventRepository.EVENTS_TABLE, 'date');
+        let media_records = await this.database.db.getAllRecords(EventRepository.EVENTS_MEDIA_TABLE);
         let events_promises = events_records.map(async event_record => {
-            return await this._obtainEventFromRecord(event_record);
+            return await this._obtainEventFromRecord(event_record, media_records);
         });
         let events = await Promise.all(events_promises);
         return events
@@ -27,7 +28,8 @@ class EventRepository{
     async deleteEventById(id){
         const media = await this._obtainMediaForEvent(id);
         media.forEach(async media_url => {
-            await this.database.db.deleteFile(media_url.split('/').pop());
+
+            await this.database.db.deleteFile(this._obtainFileNameFromURL(media_url));
         });
         return await this.database.db.deleteRecord(EventRepository.EVENTS_TABLE, id);
     }
@@ -152,16 +154,16 @@ class EventRepository{
         return new Date(date_parts[0], date_parts[1]-1, date_parts[2]);
     }
 
-    async _obtainMediaForEvent(event_id){
+    async _obtainMediaForEvent(event_id, media_records=null){
         // TODO: make this more efficient, it is not necessary to load all the media records but only the ones that belong to the event
-        let events_media = await this.database.db.getAllRecords(EventRepository.EVENTS_MEDIA_TABLE);
-        return events_media.filter(media_record => media_record.timeline_event_id === event_id).map(media_record => media_record.url);
+        if (media_records === null){
+            media_records = await this.database.db.getAllRecords(EventRepository.EVENTS_MEDIA_TABLE);
+        }
+        return media_records.filter(media_record => media_record.timeline_event_id === event_id).map(media_record => media_record.url);
     }
 
-    async _obtainEventFromRecord(record){
-        //console.log("Obtaining event from record: ", record);
-        let media = await this._obtainMediaForEvent(record.id);
-        //console.log("Media for event: ", media);
+    async _obtainEventFromRecord(record, media_records=null){
+        let media = await this._obtainMediaForEvent(record.id, media_records);
         return new Event({title: record.title, description: record.description, date: this._convertToDate(record.date), place: record.place, media: media, id: record.id});
     }
 
@@ -182,7 +184,7 @@ class EventRepository{
                     url: media_url
                 });
             } catch (error) {
-                await this.database.db.deleteFile(media_url.split('/').pop());
+                await this.database.db.deleteFile(this._obtainFileNameFromURL(media_url));
                 throw error; // Re-throw error to be handled by Promise.all
             }
         });
@@ -207,7 +209,7 @@ class EventRepository{
             }
 
             try {
-                return await this.database.db.deleteFile(media_url.split('/').pop());
+                return await this.database.db.deleteFile(this._obtainFileNameFromURL(media_url));
             } catch (error) {
                 console.error("Error deleting media: ", error);
                 throw error; // Re-throw error to be handled by Promise.all
@@ -216,6 +218,10 @@ class EventRepository{
 
         // Wait for all media deletions to complete
         return Promise.allSettled(deletePromises);
+    }
+
+    _obtainFileNameFromURL(url){
+        return url.split('/').pop().split('?')[0];
     }
 }
 

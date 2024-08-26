@@ -89,18 +89,38 @@ export class DBSupabase {
   }
 
   async uploadFile(file) {
+    console.log('Uploading file SUPA:', file);
 
     const { data, error } = await this.supabase.storage
       .from('interactive_timeline_media')
-      .upload(`test`, file)
+      .upload(file.name, file)
     if (error) {
       console.error('Error uploading file:', error.message)
       throw error
     }
-    return data.Location
+
+    console.log('Uploaded file SUPA:', data);
+    
+    // Get the signed URL for the uploaded file (valid for 5 years)
+    const signedUrl = await this.getSignedUrl(file.name)
+    console.log('Signed URL:', signedUrl)
+    return signedUrl
+  }
+
+  async getSignedUrl(file_name) {
+    const { data, error } = await this.supabase.storage
+      .from('interactive_timeline_media')
+      .createSignedUrl(file_name, 157680000)
+    if (error) {
+      console.error('Error getting signed URL:', error.message)
+      throw error
+    }
+    return data.signedUrl
   }
 
   async deleteFile(file_name) {
+
+    console.log("DELETE FILE SUPA: ", file_name);
       
     const { data, error } = await this.supabase.storage
       .from('interactive_timeline_media')
@@ -109,6 +129,9 @@ export class DBSupabase {
       console.error('Error deleting file:', error.message)
       throw error
     }
+
+    console.log('Deleted file SUPA:', data);
+
     return data
   }
 

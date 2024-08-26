@@ -87,7 +87,7 @@ export class DBPostgres {
     }
 
     async deleteFile(file_name) : Promise<any | null> {
-        console.log("DELETE FILE: ", file_name);
+        console.log("DELETE FILE POSTGRES: ", file_name);
         const response : Response = await fetch(`http://localhost:4000/delete/${file_name}`, {
             method: 'DELETE',
         });
