@@ -27,7 +27,7 @@ function EventsCRUDComponent({ eventRepository }) {
     if (!checkFields()) return;
     try {
       const newEventToSave = { ...newEvent, id: null };
-      console.log('Creating event:', newEventToSave);
+      //console.log('Creating event:', newEventToSave);
       const result = await eventRepository.saveEvent(newEventToSave);
 			
       if (!result.success) {
@@ -41,7 +41,7 @@ function EventsCRUDComponent({ eventRepository }) {
         setErrorMessage(result.message);
       }
       
-			console.log('Created event:', createdEvent);
+			//console.log('Created event:', createdEvent);
       setEvents([...events, createdEvent]);
       setNewEvent(new Event({}));
     } catch (error) {
@@ -66,7 +66,7 @@ function EventsCRUDComponent({ eventRepository }) {
         setErrorMessage(result.message);
       }
 
-      console.log('Updated event:', updatedEvent);
+      //console.log('Updated event:', updatedEvent);
 			// Update the events list with the updated event
 			setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
       setEditEvent(null);
@@ -85,7 +85,7 @@ function EventsCRUDComponent({ eventRepository }) {
     }
 
     try {
-      console.log('Deleting event with id:', id);
+      //console.log('Deleting event with id:', id);
       await eventRepository.deleteEventById(id);
       fetchEvents();
     } catch (error) {
@@ -115,7 +115,7 @@ function EventsCRUDComponent({ eventRepository }) {
 
   const handleAddMedia = (e) => {
 
-    console.log(events);
+    //console.log(events);
     const files = Array.from(e.target.files);
 
     const eventInstance = isEditing ? new Event(editEvent) : new Event(newEvent);
@@ -127,11 +127,11 @@ function EventsCRUDComponent({ eventRepository }) {
     // Update state with new data
     if (isEditing) {
       setEditEvent({ ...editEvent, media: eventInstance.getMedia(), new_media: eventInstance.getNewMedia() });
-      console.log('Edit event:', editEvent);
+      //console.log('Edit event:', editEvent);
     }
     else {
       setNewEvent({ ...newEvent, media: eventInstance.getMedia(), new_media: eventInstance.getNewMedia() });
-      console.log('New event:', newEvent);
+      //console.log('New event:', newEvent);
     }
  
     // Clear the input field

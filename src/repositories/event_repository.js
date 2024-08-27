@@ -35,7 +35,7 @@ class EventRepository{
     }
 
     async saveEvent(event){
-        console.log("Saving event: ", event);
+        //console.log("Saving event: ", event);
 
         // Create a copy of the event object
         event = { ...event };
@@ -92,7 +92,7 @@ class EventRepository{
     }
 
     async _saveExistingEvent(event, media, new_media){
-        console.log("Saving existing event: ", event);
+        //console.log("Saving existing event: ", event);
 
         let errorMessages = '';
         let event_to_return;
@@ -201,7 +201,7 @@ class EventRepository{
                 // TODO: make this more efficient, it is not necessary to load all the media records but only the one that has the url
                 let media_records = await this.database.db.getAllRecords(EventRepository.EVENTS_MEDIA_TABLE);
                 let media_to_delete_id = media_records.filter(media_record => media_record.url === media_url)[0].id;
-                console.log("Deleting media with id: ", media_to_delete_id);
+                //console.log("Deleting media with id: ", media_to_delete_id);
                 await this.database.db.deleteRecord(EventRepository.EVENTS_MEDIA_TABLE, media_to_delete_id);
             } catch (error) {
                 console.error("Error deleting media: ", error);
