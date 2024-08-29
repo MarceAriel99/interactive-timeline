@@ -50,8 +50,9 @@ class EventRepository{
 
         // Change file names (get file and add timestamp to avoid duplicates)
         new_media = new_media.map((file, index) => {
-            // Convert event title to lowercase and replace spaces with underscores
-            const title = event.title.toLowerCase().replace(/ /g, '_') + '_' + Date.now() + '_' + index + '.' + file.type.split('/')[1];
+            // Convert event title to lowercase, replace spaces with underscores, remove special characters and add timestamp to avoid duplicates
+            const title = event.title.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, '') + '_' + Date.now() + '_' + index + '.' + file.type.split('/')[1];
+
             return new File([file], title, { type: file.type });
         });
 
