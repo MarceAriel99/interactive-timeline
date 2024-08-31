@@ -225,8 +225,7 @@ function EventsCRUDComponent({ eventRepository }) {
             </div>
           ))}
           <button onClick={() => document.getElementsByName('media')[0].click()}>Add Media</button>
-          {/*<input type="file" name="media" accept="image/webp" style={{display:'none'}} multiple onChange={handleAddMedia} /> */}
-          <input type="file" name="media" accept="image/*" style={{display:'none'}} multiple onChange={handleAddMedia} />
+          <input type="file" name="media" accept="image/webp" style={{display:'none'}} multiple onChange={handleAddMedia} />
         </div>
 
         <button onClick={isEditing ? handleUpdateEvent : handleCreateEvent}>
