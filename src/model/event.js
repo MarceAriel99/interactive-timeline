@@ -1,4 +1,4 @@
-// TODO: Move to typescript
+// TODO: Move to typescript or integrate into a React component that also manages creatin and edition
 class Event {
   constructor({title='', description='', date='', place='', media=[], new_media=[], id=null}){
     this.title = title; // String

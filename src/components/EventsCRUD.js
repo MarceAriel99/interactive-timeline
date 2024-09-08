@@ -1,6 +1,6 @@
 // EventsCRUDComponent.js
 
-import React, { useState, useEffect } from 'react';
+import { React, useState, useEffect } from 'react';
 import Event from '../model/event';
 
 function EventsCRUDComponent({ eventRepository }) {

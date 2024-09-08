@@ -3,8 +3,9 @@ import 'react-vertical-timeline-component/style.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import React from 'react';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
+// TODO: Add a search bar to filter events by title or description
 function TimelineComponent({ events }) {
 
     // If the last element doesn't exist
@@ -80,7 +81,7 @@ function TimelineComponent({ events }) {
 
     return (
         <VerticalTimeline className='timeline__component'>
-            {events.map((event, event_index) => (
+            {events.map((event) => (
                 <VerticalTimelineElement
                     id={"timeline__component__element__id__" + event.id}
                     key={event.id}
